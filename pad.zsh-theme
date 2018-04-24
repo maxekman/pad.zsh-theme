@@ -16,11 +16,23 @@ function pad_hook_precmd {
 add-zsh-hook preexec pad_hook_preexec
 add-zsh-hook precmd pad_hook_precmd
 
+function cluster_status {
+    local CLUSTER
+    CLUSTER=$(kubectl config current-context)
+    [[ -n "$CLUSTER" ]] && echo "cluster: $CLUSTER"
+}
+
+function gcp_status {
+    local PROJ
+    PROJ=$(gcloud config get-value core/project 2>/dev/null)
+    [[ -n "$PROJ" ]] && echo "gcp: $PROJ"
+ }
+
 function render_top_bar {
     local ZERO='%([BSUbfksu]|([FB]|){*})'
 
     # Top right
-    local TOP_RIGHT="${vcs_info_msg_0_}"
+    local TOP_RIGHT="%F{19}$(gcp_status) ${vcs_info_msg_0_}"
     # local TOP_RIGHT=" foo "
     local RIGHT_WIDTH=${#${(S%%)TOP_RIGHT//$~ZERO/}}
 
@@ -36,7 +48,7 @@ function render_top_bar {
     local FILL="\${(l:(($COLUMNS - ($LEFT_WIDTH + $RIGHT_WIDTH + 2))):: :)}"
 
     # Whole bar
-    TOP_BAR="%K{18} $TOP_LEFT$FILL%K{19}$TOP_RIGHT%K{18} $k"
+    TOP_BAR="%K{18} $TOP_LEFT$FILL%K{18}$TOP_RIGHT%K{18} $k"
 }
 
 setprompt () {
@@ -46,7 +58,7 @@ setprompt () {
     # display exitcode on the right when >0
     return_code="%(?..%F{1}⌗%?)"
 
-    RPROMPT=' ${return_code} %F{19}${LAST_EXEC_TIME}s%f%k'
+    RPROMPT=' ${return_code} %F{18}${LAST_EXEC_TIME}s%f%k'
 }
 
 autoload -Uz vcs_info
