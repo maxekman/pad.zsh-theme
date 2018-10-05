@@ -26,13 +26,14 @@ function gcp_status {
     local PROJ
     PROJ=$(gcloud config get-value core/project 2>/dev/null)
     [[ -n "$PROJ" ]] && echo "gcp:$PROJ"
- }
+}
 
 function render_top_bar {
     local ZERO='%([BSUbfksu]|([FB]|){*})'
 
     # Top right
-    local TOP_RIGHT="%F{19}$(cluster_status)  $(gcp_status) ${vcs_info_msg_0_}"
+    # local TOP_RIGHT="%F{19}$(cluster_status)  $(gcp_status) ${vcs_info_msg_0_}"
+    local TOP_RIGHT="%F{19}${vcs_info_msg_0_}"
     # local TOP_RIGHT=" foo "
     local RIGHT_WIDTH=${#${(S%%)TOP_RIGHT//$~ZERO/}}
 
